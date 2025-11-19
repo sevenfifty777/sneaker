@@ -2,7 +2,7 @@ import classNames from "classnames";
 import React from "react";
 import { BiCheckbox, BiCheckboxChecked } from "react-icons/bi";
 import { serverStore } from "../stores/ServerStore";
-import { GroundUnitMode, settingsStore } from "../stores/SettingsStore";
+import { GroundUnitMode, MapProvider, settingsStore } from "../stores/SettingsStore";
 
 function BigCheckbox({
   checked,
@@ -154,6 +154,34 @@ export function MapSettings(): JSX.Element {
             >
               Enemy (JTAC-Mode)
             </option>
+          </select>
+        </label>
+        <label className="flex flex-row items-center">
+          <div className="flex flex-col">
+            <h3 className="font-bold select-none">Map Provider</h3>
+            <p className="text-sm text-gray-700 select-none">
+              Select the background map style.
+            </p>
+          </div>
+          <select
+            value={mapSettings.mapProvider || "osm"}
+            className="form-select ml-auto border rounded-sm p-2 border-gray-400"
+            onChange={(e) => {
+              settingsStore.setState({
+                map: {
+                  ...mapSettings,
+                  mapProvider: e.target.value as MapProvider,
+                },
+              });
+            }}
+          >
+            <option value="osm">OpenStreetMap</option>
+            <option value="cartodb-dark">Dark Matter</option>
+            <option value="cartodb-light">Positron (Light)</option>
+            <option value="cartodb-voyager">Voyager (Colorful)</option>
+            <option value="satellite">Satellite (Esri)</option>
+            <option value="esri-street">Esri Street Map</option>
+            <option value="esri-topo">Esri Topographic</option>
           </select>
         </label>
       </div>

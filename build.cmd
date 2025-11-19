@@ -1,5 +1,6 @@
 @echo off
 set GOARCH=386
+set PATH=%PATH%;%USERPROFILE%\go\bin
 
 echo Cleaning up...
 del sneaker.exe 2>NUL

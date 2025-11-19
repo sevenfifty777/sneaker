@@ -170,7 +170,10 @@ func (s *serverSession) run() {
 	go s.updateLoop()
 
 	for {
-		s.runTacViewClient()
+		err := s.runTacViewClient()
+		if err != nil {
+			log.Printf("[session:%v] Tacview connection error: %v", s.server.Name, err)
+		}
 		time.Sleep(time.Second * 5)
 	}
 }

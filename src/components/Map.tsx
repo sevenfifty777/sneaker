@@ -37,6 +37,67 @@ import { MissionTimer } from "./MissionTimer";
 import ScratchPad from "./ScratchPad";
 import { Settings } from "./Settings";
 
+const getBaseLayer = (provider: string | undefined) => {
+  switch (provider) {
+    case "cartodb-dark":
+      return new maptalks.TileLayer("base", {
+        urlTemplate:
+          "https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_nolabels/{z}/{x}/{y}.png",
+        subdomains: ["a", "b", "c"],
+        maxCacheSize: 2048,
+        hitDetect: false,
+      });
+    case "cartodb-light":
+      return new maptalks.TileLayer("base", {
+        urlTemplate:
+          "https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png",
+        subdomains: ["a", "b", "c"],
+        maxCacheSize: 2048,
+        hitDetect: false,
+      });
+    case "cartodb-voyager":
+      return new maptalks.TileLayer("base", {
+        urlTemplate:
+          "https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png",
+        subdomains: ["a", "b", "c"],
+        maxCacheSize: 2048,
+        hitDetect: false,
+      });
+    case "satellite":
+      return new maptalks.TileLayer("base", {
+        urlTemplate:
+          "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        subdomains: ["a", "b", "c"],
+        maxCacheSize: 2048,
+        hitDetect: false,
+      });
+    case "esri-street":
+      return new maptalks.TileLayer("base", {
+        urlTemplate:
+          "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
+        subdomains: ["a", "b", "c"],
+        maxCacheSize: 2048,
+        hitDetect: false,
+      });
+    case "esri-topo":
+      return new maptalks.TileLayer("base", {
+        urlTemplate:
+          "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
+        subdomains: ["a", "b", "c"],
+        maxCacheSize: 2048,
+        hitDetect: false,
+      });
+    case "osm":
+    default:
+      return new maptalks.TileLayer("base", {
+        urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        subdomains: ["a", "b", "c"],
+        maxCacheSize: 2048,
+        hitDetect: false,
+      });
+  }
+};
+
 const syncVisibility = (geo: maptalks.Geometry, value: boolean) => {
   const isVisible = geo.isVisible();
   if (!isVisible && value) {
@@ -665,13 +726,7 @@ export function Map({ dcsMap }: { dcsMap: DCSMap }) {
       seamlessZoom: true,
       fpsOnInteracting: 60,
       attribution: null,
-      baseLayer: new maptalks.TileLayer("base", {
-        urlTemplate:
-          "https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_nolabels/{z}/{x}/{y}.png",
-        subdomains: ["a", "b", "c"],
-        maxCacheSize: 2048,
-        hitDetect: false,
-      }),
+      baseLayer: getBaseLayer(settings.map.mapProvider),
       layers: [
         new maptalks.VectorLayer("airports", [], {
           hitDetect: false,
@@ -752,6 +807,12 @@ export function Map({ dcsMap }: { dcsMap: DCSMap }) {
       }
     });
   }, [mapContainer, map]);
+
+  useEffect(() => {
+    if (!map.current) return;
+    const newBaseLayer = getBaseLayer(settings.map.mapProvider);
+    map.current.setBaseLayer(newBaseLayer);
+  }, [settings.map.mapProvider]);
 
   useEffect(() => {
     if (!map.current) return;

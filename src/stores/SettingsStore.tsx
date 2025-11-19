@@ -5,12 +5,22 @@ export enum GroundUnitMode {
   ENEMY = "enemy",
 }
 
+export type MapProvider =
+  | "cartodb-dark"
+  | "cartodb-light"
+  | "cartodb-voyager"
+  | "osm"
+  | "satellite"
+  | "esri-street"
+  | "esri-topo";
+
 export type SettingsStoreData = {
   map: {
     showTrackIcons?: boolean;
     showTrackLabels?: boolean;
     trackTrailLength?: number;
     groundUnitMode?: GroundUnitMode;
+    mapProvider?: MapProvider;
   };
 };
 
@@ -25,6 +35,7 @@ export const settingsStore = create<SettingsStoreData>(() => {
       showTrackLabels: true,
       trackTrailLength: 9,
       groundUnitMode: GroundUnitMode.ENEMY,
+      mapProvider: "osm",
     },
   };
 });
